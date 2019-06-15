@@ -1,0 +1,56 @@
+library(data.table)
+library(lubridate)
+library(fst)
+
+# Get player infos and keep only those with a valid birthdate
+players_id <- fread('data/atp_players.csv')
+players_id <- players_id[!is.na(birthdate)]
+players_id[, birthdate:=ymd(birthdate)]
+
+# Get ranking data and keep only non-NA entries
+data_ranking <- rbindlist(lapply(list.files(
+  path = "data",
+  pattern = "atp_rankings_*",
+  full.names = TRUE
+), fread))
+data_ranking <- data_ranking[!is.na(points)]
+data_ranking[, ranking_date:=ymd(ranking_date)]
+
+# Merge player infos on ranking data
+setkey(players_id, player_id)
+setkey(data_ranking, player)
+cols <- setdiff(colnames(players_id), "player_id")
+data_ranking[players_id, (cols):=mget(cols)]
+data_ranking <- data_ranking[!is.na(birthdate)]
+rm(cols, players_id)
+
+# Calculate player age as of ranking date
+data_ranking[, age:=interval(birthdate, ranking_date)/years(1)]
+
+# Clean data
+data_ranking <- data_ranking[age>10]
+
+# Top ranking column
+begin_time <- now()
+data_ranking <- rbindlist(lapply(data_ranking[, unique(player)], function(id){
+  player_dt <- data_ranking[player==id]
+  setkey(player_dt, ranking_date)
+  temp <- Inf
+  player_dt[, top_rank:=NA_integer_]
+  for(i in player_dt[, .I]){
+    temp <- min(temp, player_dt[i, rank])
+    player_dt[i, top_rank:=temp]
+  }
+  player_dt[]
+}))
+end_time <- now()
+
+write.fst(data_ranking, "data/data_ranking.fst")
+
+
+
+RANK = 10
+AGE = 20
+
+data_ranking_filter <- data_ranking[data_ranking$age <= AGE & data_ranking$rank <= RANK]
+
