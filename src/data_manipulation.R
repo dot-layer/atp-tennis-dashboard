@@ -1,21 +1,23 @@
 library(data.table)
-library(eeptools)
-library(tidyverse)
+library(lubridate)
 
+players_id <- fread('data/atp_players.csv')
+players_id <- players_id[!is.na(birthdate)]
+players_id[, birthdate:=ymd(birthdate)]
 
-player_id <- fread('../data/atp_players.csv')
-player_id <- na.omit(player_id, cols='birthdate')
+data_ranking <- rbindlist(lapply(list.files(
+  path = "data",
+  pattern = "atp_rankings_*",
+  full.names = TRUE
+), fread))
+data_ranking <- data_ranking[!is.na(points)]
+data_ranking[, ranking_date:=ymd(ranking_date)]
 
-player_current_ranking <- fread('../data/atp_rankings_current.csv')
-player_10s_ranking <- fread('../data/atp_rankings_10s.csv')
-player_00s_ranking <- fread('../data/atp_rankings_00s.csv')
+setkey(players_id, player_id)
+setkey(data_ranking, player)
+data_ranking[players_id, birthdate:=birthdate]
 
-player_since_00s_ranking <-  rbindlist(list(player_current_ranking, player_10s_ranking, player_00s_ranking))
-data_ranking <-  merge(player_since_00s_ranking, player_id, by.x='player', by.y='player_id')
-
-data_ranking <- transform(data_ranking, birthdate = as.Date(as.character(birthdate), "%Y%m%d"))
-data_ranking <- transform(data_ranking, ranking_date = as.Date(as.character(ranking_date), "%Y%m%d"))
-data_ranking <- transform(data_ranking, age = age_calc(birthdate, ranking_date, "years"))
+data_ranking[, age:=interval(birthdate, ranking_date)/years(1)]
 
 RANK = 10
 AGE = 20
