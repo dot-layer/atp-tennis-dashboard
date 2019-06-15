@@ -20,10 +20,14 @@ setkey(players_id, player_id)
 setkey(data_ranking, player)
 cols <- setdiff(colnames(players_id), "player_id")
 data_ranking[players_id, (cols):=mget(cols)]
+data_ranking <- data_ranking[!is.na(birthdate)]
 rm(cols, players_id)
 
 # Calculate player age as of ranking date
 data_ranking[, age:=interval(birthdate, ranking_date)/years(1)]
+
+# Clean data
+data_ranking <- data_ranking[age>10]
 
 RANK = 10
 AGE = 20
