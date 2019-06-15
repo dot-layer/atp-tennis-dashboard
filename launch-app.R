@@ -12,14 +12,17 @@ library(shiny)
 library(shinydashboard)
 library(data.table)
 library(DT)
-library(ggplot2)
-library(dplyr)
 
 
 # Source functions --------------------------------------------------------
 
+data_test <- data.table(
+  players = c("Federer", "Nadal", "Auger", "Agassi"),
+  age = c(18, 30, 22.3, 19.2),
+  rank = c(30, 2, 14, 25)
+)
 
 
 # Run app -----------------------------------------------------------------
 
-runApp("src/shiny-app/")
+runApp("src/shiny-app")
