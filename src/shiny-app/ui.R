@@ -6,8 +6,8 @@ ui <- dashboardPage(
   
   dashboardSidebar(
     sidebarMenu(
-      menuItem(text = "Player Explorer", tabName = "explorer"),
-      menuItem(text = "Player Comparator", tabName = "comparator")
+      menuItem(text = "Player Explorer", tabName = "explorer", icon = icon("fas fa-search")),
+      menuItem(text = "Player Comparator", tabName = "comparator", icon = icon("fas fa-grin-stars"))
     )
   ),
   
@@ -15,12 +15,19 @@ ui <- dashboardPage(
     tabItems(
       tabItem(tabName = "explorer",
         box(title = "Informations", width = 6,
-          numericInput("age", label = "Age:", step = 1, min = 0, max = 100, value = 18),
-          sliderInput("top_rank", label = "Top Rank:", min = 1, max = 600, value = 50)
+          numericInput("age_explorer", label = "Age:", step = 1, min = 0, max = 100, value = 18),
+          sliderInput("top_rank_explorer", label = "Top Rank:", min = 1, max = 600, value = 25)
         ),
-        renderDataTable("dt_rank_age")
+        dataTableOutput("dt_rank_age")
       ),
-      tabItem(tabName = "comparator"
+      tabItem(tabName = "comparator",
+        box(title = "Player name", width = 6,
+          selectizeInput("player_name_comparator", label = "", choices = data_test$players, selected = data_test$players[1]),
+          textOutput("age_player_name"),
+          br(),
+          sliderInput("top_rank_comparator", label = "Actual Top Ranking:", min = 1, max = 600, value = 25)
+        ),
+        dataTableOutput("dt_actual_top")
       )
     )
   )
