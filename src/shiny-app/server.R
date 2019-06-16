@@ -14,10 +14,10 @@ library(RCurl)
 
 # Source functions --------------------------------------------------------
 
-# temp <- tempfile()
-# url <- "https://raw.githubusercontent.com/dot-layer/atp-tennis-dashboard/master/data/data_ranking.fst"
-# curl::curl_download(url, temp, mode="wb")
-# data_ranking <- data.table(read_fst(temp))
+temp <- tempfile()
+url <- "https://raw.githubusercontent.com/dot-layer/atp-tennis-dashboard/master/data/data_ranking.fst"
+curl::curl_download(url, temp, mode="wb")
+data_ranking <- data.table(read_fst(temp))
 
 data_ranking[, full_name := paste(name_first, name_list)]
 data_ranking[, age := round(age, 2)]
