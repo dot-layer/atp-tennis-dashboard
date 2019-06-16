@@ -8,15 +8,16 @@ library(data.table)
 library(DT)
 library(fst)
 library(plotly)
+library(ggthemes)
 library(RCurl)
 
 
 # Source functions --------------------------------------------------------
 
-temp <- tempfile()
-url <- "https://raw.githubusercontent.com/dot-layer/atp-tennis-dashboard/master/data/data_ranking.fst"
-curl::curl_download(url, temp, mode="wb")
-data_ranking <- data.table(read_fst(temp))
+# temp <- tempfile()
+# url <- "https://raw.githubusercontent.com/dot-layer/atp-tennis-dashboard/master/data/data_ranking.fst"
+# curl::curl_download(url, temp, mode="wb")
+# data_ranking <- data.table(read_fst(temp))
 
 data_ranking[, full_name := paste(name_first, name_list)]
 data_ranking[, age := round(age, 2)]
@@ -57,11 +58,17 @@ server <- function(input, output, session) {
   })
   
   output$dt_rank_age <- renderDataTable({
-    datatable(data_ranking_rank_age()[, (c("full_name", "ranking_date", "age", "top_rank")), with = F], colnames = c("Player Name", "Ranking Date", "Age", "Rank"), rownames = FALSE)
+    datatable(data_ranking_rank_age()[, (c("full_name", "ranking_date", "age", "top_rank")), with = F], 
+              colnames = c("Player Name", "Ranking Date", "Age", "Rank"), 
+              rownames = FALSE,
+              options = list(pageLength = 10, lengthChange = FALSE))
   })
   
   output$dt_actual_top <- renderDataTable({
-    datatable(data_actual_ranking()[, (c("full_name", "rank", "age", "past_rank", "past_age")), with = F], colnames = c("Player Name", "Current Rank", "Current Age", "Past Rank", "Past Age"), rownames = FALSE)
+    datatable(data_actual_ranking()[, (c("full_name", "rank", "age", "past_rank", "past_age")), with = F], 
+              colnames = c("Player Name", "Current Rank", "Current Age", "Past Rank", "Past Age"), 
+              rownames = FALSE,
+              options = list(pageLength = 10, lengthChange = FALSE))
   })
   
   dt_prog_plot <- reactive({
@@ -75,11 +82,11 @@ server <- function(input, output, session) {
     
     plot <- ggplot(dt_prog_plot(), aes(x = age, y = rank, color = full_name)) +
               geom_line() +
-              scale_x_continuous("Age") +
-              scale_y_reverse("Rank") +
+              scale_x_continuous("Age", breaks = seq(round(min(dt_prog_plot()$age, na.rm = TRUE)), round(max(dt_prog_plot()$age, na.rm = TRUE)), 1)) +
+              scale_y_reverse("Rank", breaks = seq(0, max(dt_prog_plot()$rank, na.rm = TRUE), 100)) +
               scale_color_discrete("Full Name") +
-              theme_classic() +
-              theme(legend.position = "bottom")
+              theme(legend.position = "bottom") +
+              theme_classic()
     
     ggplotly(plot)
   })
