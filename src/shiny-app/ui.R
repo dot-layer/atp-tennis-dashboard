@@ -22,12 +22,18 @@ ui <- dashboardPage(
       ),
       tabItem(tabName = "comparator",
         box(title = "Player name", width = 6,
-          selectizeInput("player_name_comparator", label = "", choices = data_test$players, selected = data_test$players[1]),
+          selectizeInput("player_name_comparator", label = "", choices = unique(data_ranking$full_name), selected = "Roger Federer"),
           textOutput("age_player_name"),
+          textOutput("rank_player_name"),
           br(),
           sliderInput("top_rank_comparator", label = "Actual Top Ranking:", min = 1, max = 600, value = 25)
         ),
-        dataTableOutput("dt_actual_top")
+        fluidRow(
+          dataTableOutput("dt_actual_top")
+        ),
+        fluidRow(
+          plotlyOutput('prog_plot', height = "900px")
+        )
       )
     )
   )
