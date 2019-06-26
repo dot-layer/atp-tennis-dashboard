@@ -34,7 +34,7 @@ ui <- dashboardPage(skin = "black",
           box(title = "Context", width = 6, height = 250,
               HTML("The <b>Comparator Page</b> allows you to select a player and compare him with today's top ranked players, when they were his age."),
               br(),
-              "You can also click on some current top players to compare their rankings throughout with that of your selected player."
+              "You can also click on some current top players to compare their weekly rank throughout their career with that of the selected player."
           ),
           box(title = "Player name", width = 6, height = 250,
               selectizeInput("player_name_comparator", label = "", choices = unique(data_ranking$full_name), selected = "Roger Federer"),
