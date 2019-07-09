@@ -15,13 +15,13 @@ ui <- dashboardPage(skin = "black",
     tabItems(
       tabItem(tabName = "explorer",
         box(title = "Context", width = 6, height = 250,
-          "This App is mainly aimed to search for new ATP players by age and rank.", 
+          "This App is meant to allow you to search the list of ATP players by age and rank.", 
           br(), 
           br(),
-          HTML("The <b>Explorer Page</b> allows to look for players that reached a certain top ranking before a given age."),
+          HTML("The <b>Explorer Page</b> allows you to find the players who have reached a certain top ranking before a given age."),
           br(),
           br(),
-          HTML("This App is for non-commcercial usage and used data from <a href='https://github.com/JeffSackmann/tennis_atp'>Jeff Sackmann GitHub repository</a>.")
+          HTML("This App is for non-commcercial usage. It uses data from <a href='https://github.com/JeffSackmann/tennis_atp'>Jeff Sackmann GitHub repository</a>.")
         ),
         box(title = "Informations", width = 6, height = 250,
           numericInput("age_explorer", label = "Age:", step = 1, min = 0, max = 100, value = 18),
@@ -32,9 +32,9 @@ ui <- dashboardPage(skin = "black",
       tabItem(tabName = "comparator",
         fluidRow(
           box(title = "Context", width = 6, height = 250,
-              HTML("This <b>Comparator Page</b> allows to compare the actual top ranking players at this age of a selected players."),
+              HTML("The <b>Comparator Page</b> allows you to select a player and compare him with today's top ranked players, when they were his age."),
               br(),
-              "You can also click on top actual players and compare their career rankings with your selected player."
+              "You can also click on some current top players to compare their weekly rank throughout their career with that of the selected player."
           ),
           box(title = "Player name", width = 6, height = 250,
               selectizeInput("player_name_comparator", label = "", choices = unique(data_ranking$full_name), selected = "Roger Federer"),
